@@ -1,0 +1,29 @@
+version: '3.8'
+services:
+  gitlab:
+    image: "gitlab/gitlab-ce:17.11.0-ce.0"
+    hostname: "gitlab_container"
+    container_name: "gitlab_container"
+    restart: always
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.example.com'
+        gitlab_rails['gitlab_shell_ssh_port'] = 22
+        gitlab_rails['time_zone'] = 'Tehran'
+        nginx['enable'] = true
+        nginx['listen_port'] = 80
+        nginx['redirect_http_to_https'] = false
+    ports:
+      - "80:80"
+      - "443:443"
+      - "22:22"
+    volumes:
+      - /data/gitlab/config:/etc/gitlab
+      - /data/gitlab/logs:/var/log/gitlab
+      - /data/gitlab/data:/var/opt/gitlab
+    networks:
+      - gitlab-network
+
+networks:
+  gitlab-network:
+    name: gitlab-network
